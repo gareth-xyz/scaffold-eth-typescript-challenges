@@ -7,8 +7,24 @@ import './ExampleExternalContract.sol';
 contract Staker {
   ExampleExternalContract public exampleExternalContract;
 
+  mapping(address => uint256) public balances;
+
+  event Stake(address, uint256);
+
+  uint256 public constant threshold = 1 ether;
+
   constructor(address exampleExternalContractAddress) public {
     exampleExternalContract = ExampleExternalContract(exampleExternalContractAddress);
+  }
+
+  function stake() external payable {
+    emit Stake(msg.sender, msg.value);
+
+    balances[msg.sender] += msg.value;
+
+    console.log('received %s from %s, new balance: %s', msg.value, msg.sender, balances[msg.sender]);
+
+    console.log('contract balance: %s', address(this).balance);
   }
 
   // Collect funds in a payable `stake()` function and track individual `balances` with a mapping:
