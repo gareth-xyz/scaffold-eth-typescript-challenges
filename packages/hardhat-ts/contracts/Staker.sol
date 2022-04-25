@@ -16,14 +16,20 @@ contract Staker {
     exampleExternalContract = ExampleExternalContract(exampleExternalContractAddress);
   }
 
-  function stake() external payable {
-    emit Stake(msg.sender, msg.value);
+  function stake(address _sender, uint256 _amount) internal {
+    emit Stake(_sender, _amount);
 
-    balances[msg.sender] += msg.value;
+    balances[_sender] += _amount;
 
-    console.log('received %s from %s, new balance: %s', msg.value, msg.sender, balances[msg.sender]);
+    console.log('new balance: %s', balances[_sender]);
+  }
+
+  receive() external payable {
+    console.log('received %s from %s', msg.value, msg.sender);
 
     console.log('contract balance: %s', address(this).balance);
+
+    stake(msg.sender, msg.value);
   }
 
   function execute() public {
